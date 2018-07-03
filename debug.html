@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#search').on('click',function(){
+            var code = $.trim($('#code').val());
+            $.ajax({
+                url:'./search',
+                type:'GET',
+                data: {'code': code},
+                dataType: 'json',
+                scriptCharset: 'utf-8'
+            })
+            // 成功
+            .done((data) => {
+                if(!Object.keys(data).length){
+                    alert('見つかりませんでした。');
+                } else {
+                    $('#address').val(data['prefecture'] + data['city'] + data['address_line']);
+                }
+            })
+            // 失敗
+            .fail((jqXHR, textStatus, errorThrown) => {
+                alert(jqXHR.responseText);
+                //alert("(" + jqXHR.status + ")" + jqXHR.responseText);
+            })
+        });
+        $('#clear').on('click',function(){
+            $('#code').val('');
+            $('#address').val('');
+        });
+        $('#reload').on('click',function(){
+            location.reload();
+        });
+    });
+</script>
+<title>住所検索（郵便番号）</title>
+</head>
+<body>
+<p>郵便番号から住所を検索できます。</p>
+<form>
+    <p>郵便番号-> <input type="text" name="code" id="code" size="7" value="1010051">
+    <input type="button" id="search" value="検索">
+    <input type="button" id="clear" value="クリア（郵便番号・住所）">
+    <input type="button" id="reload" value="ページ更新">
+    </p>
+    <p>住所　　-> <input size="50" type="text" name="address" id="address"></p>
+</form>
+</body>
+</html>
